@@ -62,3 +62,22 @@ services:
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
+
+
+  api:
+   image: python:3.9-slim
+   container_name: api
+   working_dir: /app
+   volumes:
+    - ./api:/app
+   ports:
+    - "8000:8000"
+   depends_on:
+    - elasticsearch
+   command: >
+    bash -c "
+    pip install --no-cache-dir -r requirements.txt &&
+    uvicorn app:app --host 0.0.0.0 --port 8000
+    "
+
+
