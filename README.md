@@ -124,14 +124,23 @@ docker exec -it kafka kafka-console-consumer --bootstrap-server kafka:9092 --top
 ### Run the Spark Streaming Job
 ```
 docker exec -it spark-master bash
+```
+```
+/opt/spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  --conf spark.executor.cores=1 \
+  --conf spark.executor.memory=512m \
+  --conf spark.cores.max=1 \
+  --conf spark.jars.ivy=/tmp/ivy \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1,org.elasticsearch:elasticsearch-spark-30_2.12:8.11.0 \
+  /opt/spark/work-dir/spark_streaming.py
 
-/opt/spark/bin/spark-submit   --master spark://spark-master:7077   --conf spark.executor.cores=1   --conf spark.executor.memory=512m   --conf spark.cores.max=1   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1,org.elasticsearch:elasticsearch-spark-30_2.12:8.11.0   /opt/spark/work-dir/spark_streaming.py
 ```
 
 ### API Endpoints
 
-- Health check: `http://localhost:8000/health`  
-- Fetch anomalies: `http://localhost:8000/anomalies`  
+- Health check: `http://localhost:8000`  
+- Fetch anomalies: `http://localhost:9200/anomalies/_search`  
 
 ---
 
