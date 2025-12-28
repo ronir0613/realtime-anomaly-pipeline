@@ -12,12 +12,12 @@ spark = (
 spark.sparkContext.setLogLevel("WARN")
 
 schema = StructType([
-    StructField("sensor_id", StringType(), True),
-    StructField("value", DoubleType(), True),
-    StructField("timestamp", StringType(), True)
+    StructField("sensor_id", StringType()),
+    StructField("value", DoubleType()),
+    StructField("timestamp", StringType())
 ])
 
-raw = (
+df = (
     spark.readStream
     .format("kafka")
     .option("kafka.bootstrap.servers", "kafka:9092")
@@ -26,9 +26,10 @@ raw = (
     .load()
 )
 
-parsed = raw.select(
-    from_json(col("value").cast("string"), schema).alias("data")
-).select("data.*")
+parsed = (
+    df.select(from_json(col("value").cast("string"), schema).alias("data"))
+      .select("data.*")
+)
 
 anomalies = (
     parsed
@@ -46,7 +47,7 @@ query = (
     .option("checkpointLocation", "/tmp/checkpoints/anomalies")
     .option("es.nodes", "elasticsearch")
     .option("es.port", "9200")
-    .option("es.resource", "anomalies/_doc")
+    .option("es.resource", "anomalies")   
     .outputMode("append")
     .start()
 )

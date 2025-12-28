@@ -12,7 +12,7 @@ producer = KafkaProducer(
 while True:
     data = {
         "sensor_id": "sensor_1",
-        "value": round(random.normalvariate(70, 5), 2),
+        "value": round(random.normalvariate(70, 15), 2),
         "timestamp": datetime.utcnow().isoformat()
     }
     producer.send("sensor-data", data)
