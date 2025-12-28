@@ -107,8 +107,18 @@ docker compose up -d
 
 ### Start the Kafka Producer
 ```
-docker exec -it kafka bash
-python producer.py
+docker run --rm -it --network realtime-anomaly-pipeline_default `
+  -v ${PWD}/producer:/app `
+  python:3.9-slim bash
+```
+
+```
+pip install -r /app/requirements.txt
+python /app/producer.py
+```
+## Check Kafka Consumer
+```
+docker exec -it kafka kafka-console-consumer --bootstrap-server kafka:9092 --topic sensor-data
 ```
 
 ### Run the Spark Streaming Job
